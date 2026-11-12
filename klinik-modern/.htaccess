@@ -1,0 +1,7 @@
+# Apache (XAMPP): tolak akses langsung ke file sensitif dari browser.
+# Yang boleh dibuka hanya index.php (redirect) dan folder public/.
+<FilesMatch "\.(sql|md)$|^config\.php$">
+    Require all denied
+</FilesMatch>
+
+RedirectMatch 403 ^.*/(src|views)/

@@ -1,0 +1,5 @@
+# Folder upload TIDAK BOLEH menjalankan PHP.
+# Kalau ada yang berhasil mengunggah "shell.php", file itu tidak akan bisa dibuka/dieksekusi.
+<FilesMatch "\.(php|phtml|phar)$">
+    Require all denied
+</FilesMatch>

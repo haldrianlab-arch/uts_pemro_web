@@ -1,0 +1,354 @@
+/* =====================================================================
+   style.css  (External CSS - Pertemuan 3)
+   Dihubungkan di setiap halaman dengan:
+   <link rel="stylesheet" href="style.css">
+
+   Materi CSS yang dipakai di file ini:
+   - Selector elemen (body, table), class (.kartu), id (-), universal (*)
+   - Grouping selector (h1, h2, h3)
+   - Kombinator (.navbar a), pseudo-class (:hover, :nth-child(even))
+   - Box model: margin, padding, border, border-radius
+   - Display: inline-block, flex (Flexbox)
+   - Warna tabel diambil dari Latihan 4 Pertemuan 5
+   ===================================================================== */
+
+* {
+    box-sizing: border-box; /* padding tidak menambah lebar elemen */
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #F5F7F5;
+    color: #333;
+}
+
+h1, h2, h3 {
+    color: #2E7D32;
+}
+
+/* ---------- Navbar (Flexbox) ---------- */
+.navbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: #2E7D32;
+}
+
+.navbar .logo {
+    color: white;
+    font-weight: bold;
+    font-size: 20px;
+    margin-right: auto; /* mendorong link ke kanan */
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.navbar a:hover,
+.navbar a.aktif {
+    background-color: #1B5E20;
+}
+
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 16px 24px 40px;
+}
+
+/* ---------- Kartu statistik ---------- */
+.kartu-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.kartu {
+    flex: 1;
+    min-width: 140px;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    background: white;
+    border: 1px solid #81C784;
+    border-radius: 8px;
+}
+
+.kartu .angka {
+    font-size: 28px;
+    font-weight: bold;
+    color: #2E7D32;
+}
+
+.kartu .angka.kecil {
+    font-size: 20px;
+}
+
+/* ---------- Tabel (warna dari Latihan 4) ---------- */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    margin-bottom: 16px;
+}
+
+th, td {
+    border: 1px solid #81C784;   /* Border Tabel */
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background-color: #A5D6A7;   /* Warna Header */
+}
+
+tr:nth-child(even) {
+    background-color: #EEE;      /* Baris genap */
+}
+
+tr:hover {
+    background-color: #E0E0E0;   /* Baris Hover */
+}
+
+td.aksi {
+    white-space: nowrap;
+}
+
+/* Tabel form (Nama : [input]) -> tanpa border, seperti Tugas 1 */
+.form-table,
+.form-table td {
+    border: none;
+    background: transparent;
+    width: auto;
+}
+
+.form-table tr:hover,
+.form-table tr:nth-child(even) {
+    background: transparent;
+}
+
+.form-table td:first-child {
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+/* ---------- Input & tombol ---------- */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+    padding: 7px;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 280px;
+    max-width: 100%;
+}
+
+.input-pendek {
+    width: 100px;
+}
+
+button,
+.btn {
+    display: inline-block;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    background-color: #43A047;
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:hover,
+.btn:hover {
+    opacity: 0.85;
+}
+
+.btn-kecil  { padding: 4px 8px; font-size: 12px; }
+.btn-kuning { background-color: #F9A825; }
+.btn-merah  { background-color: #E53935; }
+.btn-abu    { background-color: #757575; }
+
+form.inline {
+    display: inline;
+}
+
+/* ---------- Form pencarian ---------- */
+.form-cari {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.form-cari input,
+.form-cari select {
+    width: auto;
+}
+
+/* ---------- Pesan ---------- */
+.alert {
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+
+.alert ul {
+    margin: 6px 0 0;
+}
+
+.alert-error  { background: #FFEBEE; color: #C62828; border: 1px solid #EF9A9A; }
+.alert-sukses { background: #E8F5E9; color: #2E7D32; border: 1px solid #A5D6A7; }
+
+.kosong {
+    color: #888;
+    font-style: italic;
+}
+
+/* ---------- Badge status ---------- */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.badge-kuning { background: #FFF8E1; color: #F57F17; }
+.badge-biru   { background: #E3F2FD; color: #1565C0; }
+.badge-hijau  { background: #E8F5E9; color: #2E7D32; }
+.badge-abu    { background: #EEE;    color: #555; }
+
+/* ---------- Pagination ---------- */
+.pagination a {
+    display: inline-block;
+    padding: 6px 10px;
+    margin-right: 4px;
+    border: 1px solid #81C784;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #2E7D32;
+}
+
+.pagination a.aktif,
+.pagination a:hover {
+    background-color: #43A047;
+    color: white;
+}
+
+/* ---------- Detail ---------- */
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: #43A047;
+    color: white;
+    font-size: 28px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.detail-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+.bukti img {
+    max-width: 280px;
+    border: 1px solid #81C784;
+    border-radius: 6px;
+}
+
+.thumb {
+    max-width: 120px;
+    border: 1px solid #ccc;
+    margin-bottom: 6px;
+}
+
+.rincian {
+    width: auto;
+    min-width: 300px;
+}
+
+/* Selector lebih spesifik supaya mengalahkan aturan .form-table td */
+.form-table .rincian td,
+.form-table .rincian th {
+    border: 1px solid #81C784;
+    font-weight: normal;
+}
+
+.form-table .rincian th {
+    font-weight: bold;
+}
+
+.rincian td:last-child,
+.rincian th:last-child {
+    text-align: right;
+}
+
+.list-gejala {
+    margin: 0;
+    padding-left: 18px;
+}
+
+/* ---------- Halaman latihan (CSS Grid) ---------- */
+.latihan-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+}
+
+.latihan-box {
+    background: white;
+    border: 1px solid #81C784;
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.latihan-box h3 {
+    margin-top: 0;
+}
+
+.latihan-box .alert {
+    margin: 12px 0 0;
+}
+
+.tabel-kabisat {
+    width: auto;
+    margin-top: 12px;
+}
+
+.tabel-kabisat tr.kabisat {
+    background-color: #87CEEB; /* biru muda seperti contoh slide */
+}
+
+/* ---------- Responsif: layar kecil (HP) ---------- */
+@media (max-width: 700px) {
+    table {
+        display: block;
+        overflow-x: auto; /* tabel bisa digeser ke samping */
+    }
+}
