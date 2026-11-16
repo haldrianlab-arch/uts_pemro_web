@@ -1,0 +1,90 @@
+/* style.css - CSS minimal (warna tabel dari Latihan 4 Pertemuan 5)
+
+   PENANDA:
+   [WAJIB-CSS] = kalau soal minta "CSS minimal", tulis bagian ini saja
+                 (supaya tabel punya garis & rapi). Cuma ±10 baris.
+   [SKIP-CSS]  = hiasan, boleh tidak ditulis.
+   [SKIP-LOGIN]= hanya dipakai halaman login/logout.
+
+   Kalau soal TIDAK minta CSS sama sekali: file ini tidak perlu dibuat,
+   cukup <table border="1"> di index.php (sudah ada).
+*/
+
+/* [SKIP-CSS] */
+body {
+    font-family: Arial, sans-serif;
+    margin: 30px;
+}
+
+/* [WAJIB-CSS] MULAI: tabel data utama */
+table.data {
+    border-collapse: collapse;   /* garis dobel jadi satu */
+    width: 100%;
+}
+table.data th, table.data td {
+    border: 1px solid #81C784;
+    padding: 8px;
+    text-align: left;
+}
+table.data th            { background-color: #A5D6A7; }
+/* [WAJIB-CSS] SELESAI */
+
+/* [SKIP-CSS] warna baris genap, hover, tombol sebaris */
+table.data tr:nth-child(even) { background-color: #EEE; }
+table.data tr:hover      { background-color: #E0E0E0; }
+table.data td:last-child { white-space: nowrap; } /* tombol Edit & Hapus sebaris */
+
+/* [SKIP-CSS] Tabel form (tanpa garis) */
+td {
+    padding: 4px;
+}
+
+/* [SKIP-CSS] */
+input[type="text"], input[type="password"], input[type="date"], select, textarea {
+    width: 250px;
+    padding: 5px;
+}
+
+/* [SKIP-CSS] Tombol & link tombol. Tanpa ini, .btn tampil sebagai link biasa (tetap berfungsi) */
+button, .btn {
+    display: inline-block;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    background-color: #43A047;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+.btn-kuning { background-color: #F9A825; }
+.btn-merah  { background-color: #E53935; }
+.btn-abu    { background-color: #757575; }
+
+/* [SKIP-CSS] pesan error merah (opsional, tapi bagus kalau sempat) */
+.error {
+    color: #C62828;
+}
+
+/* [SKIP-LOGIN] [SKIP-CSS] Header (nama user + logout) pakai Flexbox */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* [SKIP-LOGIN] [SKIP-CSS] Kotak login di tengah */
+.login-box {
+    width: 360px;
+    margin: 80px auto;
+    padding: 24px;
+    border: 1px solid #81C784;
+    border-radius: 8px;
+}
+.login-box input {
+    width: 200px;
+}
+.hint {
+    color: #777;
+    font-size: 13px;
+}

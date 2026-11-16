@@ -1,5 +1,39 @@
 # Persiapan Ujian Praktik CRUD — Pemrograman Web
 
+## ⭐ Mulai dari sini: kisi-kisi resmi UTS
+
+> (a) halaman login tanpa database, cukup pakai `if` · (b) CRUD: tampil tabel, tambah, edit, hapus
+
+Project yang **persis sesuai kisi-kisi** ada di [`uts-latihan/`](uts-latihan/) (Data Mahasiswa, login `admin` / `admin123`), plus contekan [`uts-latihan/CATATAN_UTS.md`](uts-latihan/CATATAN_UTS.md).
+
+| File | Kisi-kisi |
+|---|---|
+| `login.php`, `cek_login.php`, `logout.php` | (a) login pakai `if` + session |
+| `index.php` | (b) tampil data ke tabel utama |
+| `tambah.php` | (b) tambah data |
+| `edit.php` | (b) edit data |
+| `hapus.php` | (b) hapus data |
+
+### Apa yang di-print untuk ujian open book?
+
+**Jangan print semua** — `klinik-dosen` dan `klinik-modern` terlalu banyak halaman dan malah memperlambat mencari saat ujian. Cukup:
+
+| Print | Kira-kira | Alasan |
+|---|---|---|
+| `uts-latihan/CATATAN_UTS.md` | 4–5 hlm | Urutan kerja, template singkat, tabel error & solusinya |
+| `uts-latihan/` semua file `.php` + `database.sql` | ~10 hlm | Kode lengkap yang tinggal ditiru & diganti nama kolomnya |
+| (opsional) `klinik-dosen/tambah.php` + `ubah.php` | ~6 hlm | Hanya kalau ingin contoh checkbox array & upload file |
+
+`klinik-modern` tidak perlu di-print (gayanya berbeda dari yang diajarkan dosen); cukup dibaca untuk pemahaman.
+
+Cara print rapi:
+- File `.php`: buka di **Notepad++** (editor yang dipakai di kuliah) → *File → Print* — otomatis ada warna kode & nomor baris.
+- File `CATATAN_UTS.md`: buka di VS Code → `Ctrl+Shift+V` (preview) → salin ke Word, atau buka langsung di GitHub kalau project ini di-push, lalu print dari browser.
+
+---
+
+## Project pendalaman
+
 Dua project dengan **fitur yang sama persis** (Registrasi Pasien Klinik, dikembangkan dari Tugas 1), ditulis dengan dua gaya:
 
 | Folder | Gaya | Kapan dipakai |
