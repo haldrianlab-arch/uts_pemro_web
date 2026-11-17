@@ -34,8 +34,10 @@ $result = $conn->query($sql);
     <table class="data" border="1">
         <tr>
             <th>No</th>
+            <th>Foto</th>
             <th>NIM</th>
             <th>Nama</th>
+            <th>Email</th>
             <th>Jenis Kelamin</th>
             <th>Jurusan</th>
             <th>Tanggal Lahir</th>
@@ -49,8 +51,14 @@ $result = $conn->query($sql);
         ?>
             <tr>
                 <td><?php echo $no++; ?></td>
+                <td>
+                    <?php if (!empty($row["foto"])) { ?>
+                        <img src="uploads/<?php echo htmlspecialchars($row["foto"]); ?>" width="50">
+                    <?php } else { echo "-"; } ?>
+                </td>
                 <td><?php echo htmlspecialchars($row["nim"]); ?></td>
                 <td><?php echo htmlspecialchars($row["nama"]); ?></td>
+                <td><?php echo htmlspecialchars($row["email"]); ?></td>
                 <td><?php echo ($row["jenis_kelamin"] == "L") ? "Laki-laki" : "Perempuan"; ?></td>
                 <td><?php echo htmlspecialchars($row["jurusan"]); ?></td>
                 <td><?php echo date("d-m-Y", strtotime($row["tgl_lahir"])); ?></td>
@@ -64,7 +72,7 @@ $result = $conn->query($sql);
         <?php
             }
         } else {
-            echo "<tr><td colspan='8'>Belum ada data</td></tr>";
+            echo "<tr><td colspan='10'>Belum ada data</td></tr>";
         }
         $conn->close();
         ?>

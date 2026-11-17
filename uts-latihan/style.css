@@ -40,7 +40,7 @@ td {
 }
 
 /* [SKIP-CSS] */
-input[type="text"], input[type="password"], input[type="date"], select, textarea {
+input[type="text"], input[type="password"], input[type="email"], input[type="date"], select, textarea {
     width: 250px;
     padding: 5px;
 }

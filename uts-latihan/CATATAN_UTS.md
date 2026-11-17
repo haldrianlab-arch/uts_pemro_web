@@ -5,7 +5,8 @@ Project acuan: folder `uts-latihan/` (Data Mahasiswa). Login: `admin` / `admin12
 
 > **Baru buka file ini?** Langsung ke bagian **9 (apa yang di-print)** dan **10 (rencana belajar)** di paling bawah, lalu kembali ke atas.
 > Versi **tanpa login & CSS minimal** ada di bagian **8**.
-> Versi **ringkas siap ketik** (login tetap ada, CSS 15 baris, ±330 baris total) ada di folder **`uts-minimal/`** — lihat bagian 8b.
+> Versi **ringkas siap ketik** (**tanpa login**, CSS 15 baris, validasi lengkap ditulis langsung di tiap file) ada di folder **`uts-minimal/`** — lihat bagian 8b.
+> Semua validasi Pertemuan 6 (+ upload foto) ada di **bagian 3b**.
 
 ---
 
@@ -130,6 +131,85 @@ echo "<script>alert('Terhapus'); window.location='index.php';</script>";
 
 ---
 
+## 3b. Validasi Pertemuan 6 + upload foto (ada di `uts-latihan/validasi.php` & `uts-minimal/tambah.php`)
+
+### Validasi sisi klien (HTML5) — di tag `<input>`
+| Atribut | Contoh | Fungsi |
+|---|---|---|
+| `required` | `<input name="nim" required>` | Wajib diisi |
+| `pattern` | `pattern="[0-9]{8}"` (8 angka) · `pattern="[a-zA-Z\s]+"` (huruf & spasi) | Format dengan regex |
+| `type="email"` | `<input type="email" name="email">` | Browser cek format email |
+| `maxlength` / `minlength` | `maxlength="50"` | Batas panjang |
+| `accept` | `<input type="file" accept=".jpg,.jpeg,.png">` | Filter pilihan file |
+
+Validasi klien bisa diakali (Inspect Element), jadi **validasi server tetap wajib**.
+
+### Validasi sisi server (PHP) — pola `$errors[]`
+```php
+$errors = [];
+
+// 1. Input kosong
+if (empty($nim)) {
+    $errors[] = "NIM wajib diisi.";
+// 2. Hanya angka + 3. panjang input
+} else if (!is_numeric($nim) || strlen($nim) != 8) {
+    $errors[] = "NIM harus 8 digit angka.";
+}
+
+// 4. Hanya huruf (regex)
+if (!preg_match("/^[a-zA-Z\s]+$/", $nama)) {
+    $errors[] = "Nama hanya boleh huruf dan spasi.";
+}
+
+// 5. Format email
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $errors[] = "Format email tidak valid.";
+}
+
+// Tampilkan SEMUA error sekaligus (di HTML)
+foreach ($errors as $err) {
+    echo "<p style='color:red'>$err</p>";
+}
+
+// Simpan hanya kalau tidak ada error
+if (empty($errors)) { /* INSERT / UPDATE */ }
+```
+
+### Upload foto + validasi
+```html
+<!-- form WAJIB pakai enctype, kalau tidak $_FILES kosong -->
+<form method="post" action="" enctype="multipart/form-data">
+    <input type="file" name="foto" accept=".jpg,.jpeg,.png">
+```
+```php
+$foto          = $_FILES["foto"];          // isinya: name, type, tmp_name, error, size
+$allowed_types = ["image/jpeg", "image/png"];
+$max_size      = 2 * 1024 * 1024;          // 2MB
+
+if ($foto["error"] !== UPLOAD_ERR_OK) {
+    $errors[] = "Foto wajib diunggah.";
+} elseif (!in_array($foto["type"], $allowed_types)) {
+    $errors[] = "Hanya file JPG dan PNG yang diizinkan.";
+} elseif ($foto["size"] > $max_size) {
+    $errors[] = "Ukuran file maksimum 2MB.";
+}
+
+if (empty($errors)) {
+    $nama_foto = uniqid() . "-" . basename($foto["name"]);       // nama unik
+    move_uploaded_file($foto["tmp_name"], "uploads/" . $nama_foto);
+    // simpan $nama_foto ke kolom `foto` di database
+}
+```
+| Situasi | Yang dilakukan |
+|---|---|
+| Tampil di tabel | `<img src="uploads/<?php echo $row['foto']; ?>" width="50">` |
+| **Edit** tanpa pilih file baru | `$foto["error"] == UPLOAD_ERR_NO_FILE` → pakai nama foto lama, jangan `required` di input file |
+| **Edit** dengan file baru | Upload baru → `unlink("uploads/" . $foto_lama);` |
+| **Hapus** data | `SELECT foto` dulu → DELETE → `unlink("uploads/" . $foto);` |
+| Folder | Buat folder **`uploads`** di dalam folder project sebelum tes |
+
+---
+
 ## 4. Isi ulang form saat EDIT (sering lupa!)
 
 | Input | Cara mengisi data lama |
@@ -153,8 +233,10 @@ CREATE TABLE mahasiswa (
   id INT AUTO_INCREMENT PRIMARY KEY,
   nim VARCHAR(10) NOT NULL,
   nama VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL,
   tgl_lahir DATE,
-  alamat TEXT
+  alamat TEXT,
+  foto VARCHAR(255)          -- simpan NAMA FILE-nya saja, filenya di folder uploads/
 );
 INSERT INTO mahasiswa (nim, nama) VALUES ('20231001', 'Agus');
 SELECT * FROM mahasiswa WHERE id = 1;
@@ -180,6 +262,10 @@ Teks pakai kutip `'...'`, angka tidak perlu kutip.
 | Semua data ikut berubah/terhapus | Lupa `WHERE id = $id` | Selalu pakai WHERE |
 | Edit: form kosong | Lupa `value="..."` / SELECT data lama | Lihat bagian 4 |
 | Login berhasil tapi index tetap minta login | `session_start()` tidak dipanggil di cek_login | Tambahkan |
+| `$_FILES` kosong / `Undefined array key "foto"` | Form tidak pakai `enctype="multipart/form-data"` | Tambahkan di tag `<form>` |
+| `move_uploaded_file(...): Failed to open stream` | Folder `uploads/` belum dibuat | Buat folder `uploads` di dalam folder project |
+| Foto tidak muncul di tabel (ikon gambar rusak) | Path `src` salah / nama file di DB beda | Cek `uploads/` + nama file di phpMyAdmin |
+| Upload selalu "Foto wajib diunggah" walau file kecil | Lupa `enctype` atau `name` input file beda dengan `$_FILES["..."]` | Samakan `name="foto"` dengan `$_FILES["foto"]` |
 | Halaman blank putih | Error PHP tersembunyi | Tambah `error_reporting(E_ALL); ini_set('display_errors', 1);` di atas |
 
 Debug cepat: `var_dump($_POST);` · `echo $sql;` · `echo $conn->error;`
@@ -191,8 +277,11 @@ Debug cepat: `var_dump($_POST);` · `echo $sql;` · `echo $conn->error;`
 - [ ] Buka `index.php` langsung tanpa login → dilempar ke login
 - [ ] Tabel menampilkan semua data
 - [ ] Tambah data → muncul di tabel
+- [ ] Submit form kosong / format salah → muncul **semua** pesan error
+- [ ] Upload file selain JPG/PNG atau > 2MB → ditolak
+- [ ] Foto muncul di tabel
 - [ ] Edit → form terisi data lama (termasuk radio/select) → tersimpan
-- [ ] Hapus → ada konfirmasi → data hilang
+- [ ] Hapus → ada konfirmasi → data hilang (file foto di `uploads/` ikut terhapus)
 - [ ] Logout → kembali ke login
 - [ ] Export database (phpMyAdmin → Export) kalau diminta dikumpulkan
 
@@ -228,38 +317,43 @@ Di file project sudah kuberi **penanda** (tidak ada yang dihapus). Cari dengan `
 | **CSS minimal** | Hanya blok `[WAJIB-CSS]` di `style.css`: `border-collapse`, `border`, `padding`, warna header |
 | **CSS lengkap** | Semua isi `style.css` |
 
-### Jadi, versi paling ringkas (tanpa login + tanpa CSS) cukup **6 file**:
+### Jadi, versi paling ringkas (tanpa login + tanpa CSS) cukup **7 file** + folder `uploads/`:
 
 ```
 database.sql   -> buat tabel di phpMyAdmin
 koneksi.php    -> 8 baris
+validasi.php   -> fungsi validasi + upload foto
 index.php      -> tampil tabel   (tanpa include cek_login & blok header)
 tambah.php     -> tambah         (tanpa include cek_login)
 edit.php       -> edit           (tanpa include cek_login)
 hapus.php      -> hapus          (tanpa include cek_login)
 ```
+Versi jadinya (validasi ditulis langsung tanpa `validasi.php`) sudah ada di folder **`uts-minimal/`**.
 
 Kalau masih mau lebih cepat:
-- Validasi di `tambah.php` / `edit.php` boleh dikurangi jadi `empty()` saja. Pola `preg_match` & `is_numeric` hanya kalau soal memintanya.
+- Validasi boleh dikurangi jadi `empty()` saja. `strlen`, `is_numeric`, `preg_match`, `filter_var` hanya kalau soal memintanya.
+- Kalau soal tidak minta upload foto: buang kolom `foto`, input file, `enctype`, dan bagian validasi/upload/unlink foto.
 - Halaman konfirmasi di `hapus.php` boleh diganti versi cepat 4 baris (lihat komentar di atas `hapus.php`).
 
 ---
 
-## 8b. Folder `uts-minimal/` — versi CSS minimal & ringkas
+## 8b. Folder `uts-minimal/` — versi TANPA login, CSS minimal & ringkas
 
-Fitur sama dengan `uts-latihan` (login + tampil, tambah, edit, hapus), database sama (`db_uts`), tapi **sekitar setengah panjangnya** (±330 baris vs ±620), jadi lebih cepat diketik saat ujian.
+Fitur: tampil, tambah, edit, hapus + **validasi lengkap Pertemuan 6** + **upload foto**. **Tidak ada login.** Database sama dengan `uts-latihan` (`db_uts`).
+Total ±430 baris (vs ±820 di `uts-latihan`), jadi lebih cepat diketik saat ujian. Isinya cuma **7 file**: `database.sql`, `koneksi.php`, `index.php`, `tambah.php`, `edit.php`, `hapus.php`, `style.css` (+ folder `uploads/`).
 
 | Bagian | `uts-latihan` (lengkap) | `uts-minimal` (ringkas) |
 |---|---|---|
+| Login | Ada (`login.php`, `cek_login.php`, `logout.php`) | **Tidak ada** |
 | CSS | ±90 baris, tombol berwarna, kotak login | **15 baris**: garis tabel, padding, warna header |
 | Tombol Edit/Hapus | `class="btn ..."` | Link biasa `Edit \| Hapus` |
-| Validasi | `$errors[]`, `is_numeric`, `preg_match`, NIM duplikat | Satu `if (empty(...))` + `alert()` |
-| Form edit | Variabel + sticky form | Langsung `$data["..."]` dari database |
+| Validasi | Sama lengkap (`empty`, `strlen`, `is_numeric`, `preg_match`, `filter_var`, upload), dikumpulkan sebagai **fungsi** di `validasi.php` | Sama lengkap, ditulis **langsung** di `tambah.php` dan `edit.php` (tidak perlu file tambahan) |
+| Pesan error | `$errors[]` + class CSS | `$errors[]` + `style='color:red'` |
 | Select | Dari array + `foreach` | `<option>` ditulis satu-satu + `if (...) echo "selected"` |
-| Hapus | Halaman konfirmasi + POST | `onclick="return confirm()"` di index, `hapus.php` 10 baris |
-| `htmlspecialchars` | Ada | Tidak ada (gaya contoh dosen) |
+| Hapus | Halaman konfirmasi + POST | `onclick="return confirm()"` di index, `hapus.php` ±20 baris |
+| Cek NIM kembar | Pesan khusus (`errno 1062`) | Pesan error MySQL bawaan |
 
-Saran: **pelajari `uts-latihan`** supaya paham, **ketik ulang `uts-minimal`** saat simulasi ujian. Kalau waktu ujian masih sisa, tambahkan validasi dari `uts-latihan`.
+Saran: **pelajari `uts-latihan`** supaya paham, **ketik ulang `uts-minimal`** saat simulasi ujian. Kalau soal minta login, tambahkan 3 file login dari `uts-latihan`.
 
 ---
 
@@ -276,7 +370,7 @@ Terlalu banyak kertas justru bikin lambat mencari saat ujian. Cukup print ini:
    - checklist sebelum dikumpulkan (bagian 7)
    - versi tanpa login & CSS minimal (bagian 8)
 2. **Semua file `.php` dan `database.sql` di `uts-latihan/`** (sekitar 10 halaman). Print lewat **Notepad++** (*File → Print*) supaya ada warna kode & nomor baris. Penanda `[SKIP-LOGIN]` / `[SKIP-CSS]` ikut tercetak, jadi saat ujian langsung kelihatan bagian mana yang boleh dilewati.
-   - Atau, kalau ingin printan lebih tipis: print **`uts-minimal/`** saja (±6 halaman) sebagai pengganti.
+   - Atau, kalau ingin printan lebih tipis: print **`uts-minimal/`** saja (±8 halaman, tanpa login) sebagai pengganti — tapi kalau soal minta login, bawa juga printan `login.php`, `cek_login.php`, `logout.php`.
 3. *(Opsional)* `klinik-dosen/tambah.php` dan `klinik-dosen/ubah.php` — hanya kalau ingin pegang contoh **checkbox (array)** dan **upload file**.
 
 Tidak perlu di-print: `klinik-modern/` (gaya berbeda dari yang diajarkan), `klinik-dosen/` selain dua file di atas, `README.md`.
@@ -284,7 +378,7 @@ Tidak perlu di-print: `klinik-modern/` (gaya berbeda dari yang diajarkan), `klin
 Cara print file `.md` ini: buka di VS Code → `Ctrl+Shift+V` (preview) → blok semua → copy → paste ke Word → print. Tabel & kode ikut rapi.
 
 Urutan menyusun printan (biar gampang dibalik saat ujian):
-`CATATAN_UTS` → `database.sql` → `koneksi.php` → `login.php` → `cek_login.php` → `logout.php` → `index.php` → `tambah.php` → `edit.php` → `hapus.php` → `style.css`.
+`CATATAN_UTS` → `database.sql` → `koneksi.php` → `login.php` → `cek_login.php` → `logout.php` → `validasi.php` → `index.php` → `tambah.php` → `edit.php` → `hapus.php` → `style.css`.
 
 ---
 
@@ -292,8 +386,8 @@ Urutan menyusun printan (biar gampang dibalik saat ujian):
 
 | Waktu | Kegiatan |
 |---|---|
-| 15 menit | Jalankan project: salin folder `uts-latihan` ke `C:\xampp\htdocs\`, nyalakan Apache + MySQL, buka http://localhost/uts-latihan/login.php (database `db_uts` sudah ada; kalau belum, import `database.sql` lewat phpMyAdmin). Coba login, tambah, edit, hapus. |
-| 30 menit | Baca kode berurutan: `koneksi` → `login` → `cek_login` → `index` → `tambah` → `edit` → `hapus`. Baca komentarnya. Tandai bagian yang belum paham, lalu tanyakan. |
+| 15 menit | Jalankan project: salin folder `uts-latihan` ke `C:\xampp\htdocs\`, nyalakan Apache + MySQL, buka http://localhost/uts-latihan/login.php (**import ulang `database.sql` lewat phpMyAdmin**, karena tabel sekarang punya kolom `email` & `foto`). Coba login, tambah, edit, hapus. |
+| 30 menit | Baca kode berurutan: `koneksi` → `login` → `cek_login` → `validasi` → `index` → `tambah` → `edit` → `hapus`. Baca komentarnya. Tandai bagian yang belum paham, lalu tanyakan. |
 | 15 menit | Baca bagian 4 (isi ulang form edit) dan bagian 6 (tabel error) di catatan ini. |
 | 10 menit | Print (lihat bagian 9). |
 | 60 menit | **Simulasi ujian**: buat folder baru `htdocs/latihan_buku`, tulis dari nol CRUD **Data Buku** (kode, judul, penulis, kategori `select`, tahun terbit) + login, **sambil hanya melihat printan**. Pakai bagian 1 sebagai urutan kerja dan bagian 2 untuk mengganti nama kolom. |

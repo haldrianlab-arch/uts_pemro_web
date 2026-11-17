@@ -7,6 +7,7 @@
 //   index.php : <a href="hapus.php?id=..." onclick="return confirm('Yakin?')">Hapus</a>
 //   hapus.php : $id = (int) $_GET["id"];
 //               $conn->query("DELETE FROM mahasiswa WHERE id = $id");
+//               (kalau ada foto: SELECT dulu nama fotonya, lalu unlink("uploads/" . $foto);)
 //               echo "<script>alert('Terhapus'); window.location='index.php';</script>";
 // =====================================================================
 include "cek_login.php"; // [SKIP-LOGIN] hapus baris ini kalau tanpa login
@@ -24,6 +25,10 @@ $data = $result->fetch_assoc();
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // JANGAN LUPA WHERE -> tanpa WHERE, SEMUA data terhapus!
     if ($conn->query("DELETE FROM mahasiswa WHERE id = $id") === TRUE) {
+        // foto ikut dihapus dari folder uploads/
+        if (!empty($data["foto"]) && file_exists("uploads/" . $data["foto"])) {
+            unlink("uploads/" . $data["foto"]);
+        }
         echo "<script>alert('Data berhasil dihapus'); window.location='index.php';</script>";
     } else {
         echo "<script>alert('Gagal menghapus data'); window.location='index.php';</script>";

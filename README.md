@@ -9,12 +9,15 @@ Project yang **persis sesuai kisi-kisi** ada di [`uts-latihan/`](uts-latihan/) (
 | File | Kisi-kisi |
 |---|---|
 | `login.php`, `cek_login.php`, `logout.php` | (a) login pakai `if` + session |
+| `validasi.php` | Validasi Pertemuan 6 + upload foto (dipakai tambah & edit) |
 | `index.php` | (b) tampil data ke tabel utama |
 | `tambah.php` | (b) tambah data |
 | `edit.php` | (b) edit data |
 | `hapus.php` | (b) hapus data |
 
-Versi ringkas dengan **CSS minimal** (fitur sama, ±setengah panjang, cocok untuk diketik ulang saat ujian): [`uts-minimal/`](uts-minimal/). Perbandingannya ada di `CATATAN_UTS.md` bagian 8b.
+Kedua project UTS sudah memakai **semua validasi Pertemuan 6** (`required`, `pattern`, `empty`, `strlen`, `is_numeric`, `preg_match`, `filter_var`, `$errors[]`) + **upload foto** dengan validasi tipe & ukuran.
+
+Versi ringkas **tanpa login** dengan **CSS minimal** (cocok untuk diketik ulang saat ujian): [`uts-minimal/`](uts-minimal/). Perbandingannya ada di `CATATAN_UTS.md` bagian 8b.
 
 ### Apa yang di-print untuk ujian open book?
 

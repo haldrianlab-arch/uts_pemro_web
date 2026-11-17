@@ -1,68 +1,68 @@
 <?php
 // =====================================================================
 // tambah.php  ->  KISI-KISI (b2): TAMBAH DATA (Create)
-// Pola: form POST ke diri sendiri -> ambil $_POST -> validasi -> INSERT
-//       -> alert + kembali ke index.php
+// Pola: form POST ke diri sendiri -> ambil $_POST & $_FILES -> validasi
+//       -> upload foto -> INSERT -> alert + kembali ke index.php
 // =====================================================================
 include "cek_login.php"; // [SKIP-LOGIN] hapus baris ini kalau tanpa login
 include "koneksi.php";
+include "validasi.php";  // fungsi validasiMahasiswa(), validasiFoto(), uploadFoto(), $daftar_jurusan
 
-$daftar_jurusan = ["Teknik Informatika", "Sistem Informasi", "Desain Komunikasi Visual"];
-
-// Nilai awal form kosong (supaya isian tidak hilang kalau validasi gagal)
-$nim = $nama = $jk = $jurusan = $tgl_lahir = $alamat = "";
+// Nilai awal form kosong (supaya isian tidak hilang kalau validasi gagal = "sticky form")
+$nim = $nama = $email = $jk = $jurusan = $tgl_lahir = $alamat = "";
 $errors = [];
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // 1. Ambil data dari form
+    // 1. Ambil data dari form. trim() = buang spasi di awal/akhir
     $nim       = trim($_POST["nim"]);
     $nama      = trim($_POST["nama"]);
+    $email     = trim($_POST["email"]);
     $jk        = isset($_POST["jk"]) ? $_POST["jk"] : ""; // radio tidak dipilih = tidak terkirim
     $jurusan   = $_POST["jurusan"];
     $tgl_lahir = $_POST["tgl_lahir"];
     $alamat    = trim($_POST["alamat"]);
+    $foto      = $_FILES["foto"];
 
-    // 2. Validasi (Pertemuan 6)
-    if (empty($nim)) {
-        $errors[] = "NIM wajib diisi.";
-    } else if (!is_numeric($nim) || strlen($nim) != 8) {
-        $errors[] = "NIM harus 8 digit angka.";
-    }
-    if (empty($nama)) {
-        $errors[] = "Nama wajib diisi.";
-    } else if (!preg_match("/^[a-zA-Z\s]+$/", $nama)) {
-        $errors[] = "Nama hanya boleh huruf dan spasi.";
-    }
-    if (empty($jk)) {
-        $errors[] = "Jenis kelamin wajib dipilih.";
-    }
-    if (empty($jurusan)) {
-        $errors[] = "Jurusan wajib dipilih.";
-    }
-    if (empty($tgl_lahir)) {
-        $errors[] = "Tanggal lahir wajib diisi.";
-    }
+    // 2. Validasi data + foto (foto WAJIB saat tambah), gabungkan semua error
+    $data = [
+        "nim" => $nim, "nama" => $nama, "email" => $email, "jk" => $jk,
+        "jurusan" => $jurusan, "tgl_lahir" => $tgl_lahir, "alamat" => $alamat,
+    ];
+    $errors = array_merge(validasiMahasiswa($data), validasiFoto($foto, true));
 
     // 3. Simpan kalau tidak ada error
     if (empty($errors)) {
-        // real_escape_string -> amankan tanda kutip ' supaya query tidak rusak (SQL Injection)
-        $nim_aman     = $conn->real_escape_string($nim);
-        $nama_aman    = $conn->real_escape_string($nama);
-        $jk_aman      = $conn->real_escape_string($jk);
-        $jurusan_aman = $conn->real_escape_string($jurusan);
-        $tgl_aman     = $conn->real_escape_string($tgl_lahir);
-        $alamat_aman  = $conn->real_escape_string($alamat);
+        $nama_foto = uploadFoto($foto);
 
-        $sql = "INSERT INTO mahasiswa (nim, nama, jenis_kelamin, jurusan, tgl_lahir, alamat)
-                VALUES ('$nim_aman', '$nama_aman', '$jk_aman', '$jurusan_aman', '$tgl_aman', '$alamat_aman')";
-
-        if ($conn->query($sql) === TRUE) {
-            echo "<script>alert('Data berhasil ditambah'); window.location='index.php';</script>";
-            exit;
-        } else if ($conn->errno == 1062) {
-            $errors[] = "NIM $nim sudah terdaftar."; // 1062 = data UNIQUE kembar
+        if ($nama_foto === false) {
+            $errors[] = "Gagal menyimpan foto.";
         } else {
-            $errors[] = "Gagal menyimpan: " . $conn->error;
+            // real_escape_string -> amankan tanda kutip ' supaya query tidak rusak (SQL Injection)
+            $nim_aman     = $conn->real_escape_string($nim);
+            $nama_aman    = $conn->real_escape_string($nama);
+            $email_aman   = $conn->real_escape_string($email);
+            $jk_aman      = $conn->real_escape_string($jk);
+            $jurusan_aman = $conn->real_escape_string($jurusan);
+            $tgl_aman     = $conn->real_escape_string($tgl_lahir);
+            $alamat_aman  = $conn->real_escape_string($alamat);
+            $foto_aman    = $conn->real_escape_string($nama_foto);
+
+            $sql = "INSERT INTO mahasiswa (nim, nama, email, jenis_kelamin, jurusan, tgl_lahir, alamat, foto)
+                    VALUES ('$nim_aman', '$nama_aman', '$email_aman', '$jk_aman', '$jurusan_aman',
+                            '$tgl_aman', '$alamat_aman', '$foto_aman')";
+
+            if ($conn->query($sql) === TRUE) {
+                echo "<script>alert('Data berhasil ditambah'); window.location='index.php';</script>";
+                exit;
+            }
+
+            // INSERT gagal -> foto yang sudah terupload dihapus lagi supaya tidak jadi sampah
+            hapusFoto($nama_foto);
+            if ($conn->errno == 1062) {
+                $errors[] = "NIM $nim sudah terdaftar."; // 1062 = data UNIQUE kembar
+            } else {
+                $errors[] = "Gagal menyimpan: " . $conn->error;
+            }
         }
     }
 }
@@ -78,26 +78,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Tambah Data Mahasiswa</h1>
 
     <?php
-    // Tampilkan semua error
+    // Tampilkan SEMUA error sekaligus (Pertemuan 6)
     foreach ($errors as $err) {
         echo "<p class='error'>$err</p>";
     }
     ?>
 
-    <form method="post" action="">
+    <!--
+        enctype="multipart/form-data" WAJIB kalau ada input file. Tanpa ini $_FILES kosong!
+        required, pattern, maxlength, type="email" = validasi sisi KLIEN (HTML5).
+        Validasi sisi SERVER (validasi.php) tetap wajib karena validasi klien bisa diakali.
+    -->
+    <form method="post" action="" enctype="multipart/form-data">
         <table>
             <tr>
                 <td>NIM</td><td>:</td>
-                <td><input type="text" name="nim" value="<?php echo htmlspecialchars($nim); ?>" maxlength="8" required></td>
+                <td><input type="text" name="nim" value="<?php echo htmlspecialchars($nim); ?>"
+                           required maxlength="8" pattern="[0-9]{8}" title="8 digit angka"></td>
             </tr>
             <tr>
                 <td>Nama</td><td>:</td>
-                <td><input type="text" name="nama" value="<?php echo htmlspecialchars($nama); ?>" required></td>
+                <td><input type="text" name="nama" value="<?php echo htmlspecialchars($nama); ?>"
+                           required minlength="3" maxlength="50" pattern="[a-zA-Z\s]+" title="Hanya huruf dan spasi"></td>
+            </tr>
+            <tr>
+                <td>Email</td><td>:</td>
+                <td><input type="email" name="email" value="<?php echo htmlspecialchars($email); ?>"
+                           required maxlength="50"></td>
             </tr>
             <tr>
                 <td>Jenis Kelamin</td><td>:</td>
                 <td>
-                    <input type="radio" name="jk" value="L" <?php echo ($jk == "L") ? "checked" : ""; ?>> Laki-laki
+                    <input type="radio" name="jk" value="L" required <?php echo ($jk == "L") ? "checked" : ""; ?>> Laki-laki
                     <input type="radio" name="jk" value="P" <?php echo ($jk == "P") ? "checked" : ""; ?>> Perempuan
                 </td>
             </tr>
@@ -118,7 +130,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </tr>
             <tr>
                 <td>Alamat</td><td>:</td>
-                <td><textarea name="alamat" rows="3"><?php echo htmlspecialchars($alamat); ?></textarea></td>
+                <td><textarea name="alamat" rows="3" maxlength="200"><?php echo htmlspecialchars($alamat); ?></textarea></td>
+            </tr>
+            <tr>
+                <td>Foto</td><td>:</td>
+                <!-- file tidak bisa "diingat" (sticky), user harus pilih ulang kalau validasi gagal -->
+                <td><input type="file" name="foto" accept=".jpg,.jpeg,.png" required>
+                    <br><small>JPG/PNG, maks 2MB</small></td>
             </tr>
         </table>
         <button type="submit">Simpan</button>

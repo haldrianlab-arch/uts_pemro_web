@@ -1,6 +1,5 @@
 <?php
 // index.php -> tampil data ke tabel utama
-include "cek_login.php";
 include "koneksi.php";
 
 $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
@@ -12,8 +11,6 @@ $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p>Halo, <?php echo $_SESSION["username"]; ?> | <a href="logout.php">Logout</a></p>
-
     <h2>Data Mahasiswa</h2>
     <a href="tambah.php">+ Tambah Data</a>
     <br><br>
@@ -21,8 +18,10 @@ $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
     <table>
         <tr>
             <th>No</th>
+            <th>Foto</th>
             <th>NIM</th>
             <th>Nama</th>
+            <th>Email</th>
             <th>Jenis Kelamin</th>
             <th>Jurusan</th>
             <th>Tanggal Lahir</th>
@@ -35,12 +34,18 @@ $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
         ?>
         <tr>
             <td><?php echo $no++; ?></td>
+            <td>
+                <?php if ($row["foto"] != "") { ?>
+                    <img src="uploads/<?php echo $row["foto"]; ?>" width="50">
+                <?php } ?>
+            </td>
             <td><?php echo $row["nim"]; ?></td>
-            <td><?php echo $row["nama"]; ?></td>
+            <td><?php echo htmlspecialchars($row["nama"]); ?></td>
+            <td><?php echo htmlspecialchars($row["email"]); ?></td>
             <td><?php echo ($row["jenis_kelamin"] == "L") ? "Laki-laki" : "Perempuan"; ?></td>
             <td><?php echo $row["jurusan"]; ?></td>
             <td><?php echo $row["tgl_lahir"]; ?></td>
-            <td><?php echo $row["alamat"]; ?></td>
+            <td><?php echo htmlspecialchars($row["alamat"]); ?></td>
             <td>
                 <a href="edit.php?id=<?php echo $row["id"]; ?>">Edit</a> |
                 <a href="hapus.php?id=<?php echo $row["id"]; ?>"
