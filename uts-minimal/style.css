@@ -1,0 +1,14 @@
+/* style.css - CSS MINIMAL (cukup ini untuk ujian) */
+body {
+    font-family: Arial, sans-serif;
+}
+table {
+    border-collapse: collapse;   /* garis dobel jadi satu */
+}
+th, td {
+    border: 1px solid #81C784;
+    padding: 6px;
+}
+th {
+    background-color: #A5D6A7;
+}

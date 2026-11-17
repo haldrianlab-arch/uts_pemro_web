@@ -14,6 +14,8 @@ Project yang **persis sesuai kisi-kisi** ada di [`uts-latihan/`](uts-latihan/) (
 | `edit.php` | (b) edit data |
 | `hapus.php` | (b) hapus data |
 
+Versi ringkas dengan **CSS minimal** (fitur sama, ±setengah panjang, cocok untuk diketik ulang saat ujian): [`uts-minimal/`](uts-minimal/). Perbandingannya ada di `CATATAN_UTS.md` bagian 8b.
+
 ### Apa yang di-print untuk ujian open book?
 
 **Jangan print semua** — `klinik-dosen` dan `klinik-modern` terlalu banyak halaman dan malah memperlambat mencari saat ujian. Cukup:

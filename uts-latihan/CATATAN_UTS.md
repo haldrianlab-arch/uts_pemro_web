@@ -5,6 +5,7 @@ Project acuan: folder `uts-latihan/` (Data Mahasiswa). Login: `admin` / `admin12
 
 > **Baru buka file ini?** Langsung ke bagian **9 (apa yang di-print)** dan **10 (rencana belajar)** di paling bawah, lalu kembali ke atas.
 > Versi **tanpa login & CSS minimal** ada di bagian **8**.
+> Versi **ringkas siap ketik** (login tetap ada, CSS 15 baris, ±330 baris total) ada di folder **`uts-minimal/`** — lihat bagian 8b.
 
 ---
 
@@ -244,6 +245,24 @@ Kalau masih mau lebih cepat:
 
 ---
 
+## 8b. Folder `uts-minimal/` — versi CSS minimal & ringkas
+
+Fitur sama dengan `uts-latihan` (login + tampil, tambah, edit, hapus), database sama (`db_uts`), tapi **sekitar setengah panjangnya** (±330 baris vs ±620), jadi lebih cepat diketik saat ujian.
+
+| Bagian | `uts-latihan` (lengkap) | `uts-minimal` (ringkas) |
+|---|---|---|
+| CSS | ±90 baris, tombol berwarna, kotak login | **15 baris**: garis tabel, padding, warna header |
+| Tombol Edit/Hapus | `class="btn ..."` | Link biasa `Edit \| Hapus` |
+| Validasi | `$errors[]`, `is_numeric`, `preg_match`, NIM duplikat | Satu `if (empty(...))` + `alert()` |
+| Form edit | Variabel + sticky form | Langsung `$data["..."]` dari database |
+| Select | Dari array + `foreach` | `<option>` ditulis satu-satu + `if (...) echo "selected"` |
+| Hapus | Halaman konfirmasi + POST | `onclick="return confirm()"` di index, `hapus.php` 10 baris |
+| `htmlspecialchars` | Ada | Tidak ada (gaya contoh dosen) |
+
+Saran: **pelajari `uts-latihan`** supaya paham, **ketik ulang `uts-minimal`** saat simulasi ujian. Kalau waktu ujian masih sisa, tambahkan validasi dari `uts-latihan`.
+
+---
+
 ## 9. Apa yang di-print untuk ujian (open book)
 
 Terlalu banyak kertas justru bikin lambat mencari saat ujian. Cukup print ini:
@@ -257,6 +276,7 @@ Terlalu banyak kertas justru bikin lambat mencari saat ujian. Cukup print ini:
    - checklist sebelum dikumpulkan (bagian 7)
    - versi tanpa login & CSS minimal (bagian 8)
 2. **Semua file `.php` dan `database.sql` di `uts-latihan/`** (sekitar 10 halaman). Print lewat **Notepad++** (*File → Print*) supaya ada warna kode & nomor baris. Penanda `[SKIP-LOGIN]` / `[SKIP-CSS]` ikut tercetak, jadi saat ujian langsung kelihatan bagian mana yang boleh dilewati.
+   - Atau, kalau ingin printan lebih tipis: print **`uts-minimal/`** saja (±6 halaman) sebagai pengganti.
 3. *(Opsional)* `klinik-dosen/tambah.php` dan `klinik-dosen/ubah.php` — hanya kalau ingin pegang contoh **checkbox (array)** dan **upload file**.
 
 Tidak perlu di-print: `klinik-modern/` (gaya berbeda dari yang diajarkan), `klinik-dosen/` selain dua file di atas, `README.md`.
