@@ -1,5 +1,6 @@
 <?php
 // edit.php -> edit data (dibuka dari index: edit.php?id=3)
+include "cek_login.php"; // harus login dulu
 include "koneksi.php";
 
 $id = (int) $_GET["id"];

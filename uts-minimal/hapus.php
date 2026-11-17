@@ -1,5 +1,6 @@
 <?php
 // hapus.php -> hapus data + fotonya (konfirmasi sudah di index.php lewat confirm())
+include "cek_login.php"; // harus login dulu
 include "koneksi.php";
 
 $id = (int) $_GET["id"];

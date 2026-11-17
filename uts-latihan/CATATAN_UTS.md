@@ -5,7 +5,9 @@ Project acuan: folder `uts-latihan/` (Data Mahasiswa). Login: `admin` / `admin12
 
 > **Baru buka file ini?** Langsung ke bagian **9 (apa yang di-print)** dan **10 (rencana belajar)** di paling bawah, lalu kembali ke atas.
 > Versi **tanpa login & CSS minimal** ada di bagian **8**.
-> Versi **ringkas siap ketik** (**tanpa login**, CSS 15 baris, validasi lengkap ditulis langsung di tiap file) ada di folder **`uts-minimal/`** — lihat bagian 8b.
+> Versi **ringkas siap ketik** (login tetap ada, CSS 15 baris, validasi lengkap ditulis langsung di tiap file) ada di folder **`uts-minimal/`** — lihat bagian 8b.
+>
+> **Ingat kisi-kisi:** yang *tanpa database* hanya **LOGIN** (cukup `if`). **CRUD tetap pakai database MySQL.**
 > Semua validasi Pertemuan 6 (+ upload foto) ada di **bagian 3b**.
 
 ---
@@ -337,14 +339,14 @@ Kalau masih mau lebih cepat:
 
 ---
 
-## 8b. Folder `uts-minimal/` — versi TANPA login, CSS minimal & ringkas
+## 8b. Folder `uts-minimal/` — versi CSS minimal & ringkas
 
-Fitur: tampil, tambah, edit, hapus + **validasi lengkap Pertemuan 6** + **upload foto**. **Tidak ada login.** Database sama dengan `uts-latihan` (`db_uts`).
-Total ±430 baris (vs ±820 di `uts-latihan`), jadi lebih cepat diketik saat ujian. Isinya cuma **7 file**: `database.sql`, `koneksi.php`, `index.php`, `tambah.php`, `edit.php`, `hapus.php`, `style.css` (+ folder `uploads/`).
+Fitur: **login (pakai `if`, tanpa database)** + tampil, tambah, edit, hapus (pakai database) + **validasi lengkap Pertemuan 6** + **upload foto**. Database sama dengan `uts-latihan` (`db_uts`).
+Total ±500 baris (vs ±820 di `uts-latihan`), jadi lebih cepat diketik saat ujian. Isinya **10 file**: `database.sql`, `koneksi.php`, `login.php`, `cek_login.php`, `logout.php`, `index.php`, `tambah.php`, `edit.php`, `hapus.php`, `style.css` (+ folder `uploads/`).
 
 | Bagian | `uts-latihan` (lengkap) | `uts-minimal` (ringkas) |
 |---|---|---|
-| Login | Ada (`login.php`, `cek_login.php`, `logout.php`) | **Tidak ada** |
+| Login | `login.php` + kotak login ber-CSS + pesan salah/kosong | `login.php` polos (form + `if` + pesan salah), `cek_login.php` & `logout.php` sama |
 | CSS | ±90 baris, tombol berwarna, kotak login | **15 baris**: garis tabel, padding, warna header |
 | Tombol Edit/Hapus | `class="btn ..."` | Link biasa `Edit \| Hapus` |
 | Validasi | Sama lengkap (`empty`, `strlen`, `is_numeric`, `preg_match`, `filter_var`, upload), dikumpulkan sebagai **fungsi** di `validasi.php` | Sama lengkap, ditulis **langsung** di `tambah.php` dan `edit.php` (tidak perlu file tambahan) |
@@ -353,7 +355,7 @@ Total ±430 baris (vs ±820 di `uts-latihan`), jadi lebih cepat diketik saat uji
 | Hapus | Halaman konfirmasi + POST | `onclick="return confirm()"` di index, `hapus.php` ±20 baris |
 | Cek NIM kembar | Pesan khusus (`errno 1062`) | Pesan error MySQL bawaan |
 
-Saran: **pelajari `uts-latihan`** supaya paham, **ketik ulang `uts-minimal`** saat simulasi ujian. Kalau soal minta login, tambahkan 3 file login dari `uts-latihan`.
+Saran: **pelajari `uts-latihan`** supaya paham, **ketik ulang `uts-minimal`** saat simulasi ujian. Kalau soal ternyata tidak minta login: hapus 3 file login, baris `include "cek_login.php";` di 4 file, dan baris "Halo, ... | Logout" di `index.php`.
 
 ---
 
@@ -370,7 +372,7 @@ Terlalu banyak kertas justru bikin lambat mencari saat ujian. Cukup print ini:
    - checklist sebelum dikumpulkan (bagian 7)
    - versi tanpa login & CSS minimal (bagian 8)
 2. **Semua file `.php` dan `database.sql` di `uts-latihan/`** (sekitar 10 halaman). Print lewat **Notepad++** (*File → Print*) supaya ada warna kode & nomor baris. Penanda `[SKIP-LOGIN]` / `[SKIP-CSS]` ikut tercetak, jadi saat ujian langsung kelihatan bagian mana yang boleh dilewati.
-   - Atau, kalau ingin printan lebih tipis: print **`uts-minimal/`** saja (±8 halaman, tanpa login) sebagai pengganti — tapi kalau soal minta login, bawa juga printan `login.php`, `cek_login.php`, `logout.php`.
+   - Atau, kalau ingin printan lebih tipis: print **`uts-minimal/`** saja (±9 halaman, sudah termasuk login) sebagai pengganti.
 3. *(Opsional)* `klinik-dosen/tambah.php` dan `klinik-dosen/ubah.php` — hanya kalau ingin pegang contoh **checkbox (array)** dan **upload file**.
 
 Tidak perlu di-print: `klinik-modern/` (gaya berbeda dari yang diajarkan), `klinik-dosen/` selain dua file di atas, `README.md`.

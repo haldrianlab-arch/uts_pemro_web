@@ -17,7 +17,9 @@ Project yang **persis sesuai kisi-kisi** ada di [`uts-latihan/`](uts-latihan/) (
 
 Kedua project UTS sudah memakai **semua validasi Pertemuan 6** (`required`, `pattern`, `empty`, `strlen`, `is_numeric`, `preg_match`, `filter_var`, `$errors[]`) + **upload foto** dengan validasi tipe & ukuran.
 
-Versi ringkas **tanpa login** dengan **CSS minimal** (cocok untuk diketik ulang saat ujian): [`uts-minimal/`](uts-minimal/). Perbandingannya ada di `CATATAN_UTS.md` bagian 8b.
+Versi ringkas dengan **CSS minimal** (login tetap ada, cocok untuk diketik ulang saat ujian): [`uts-minimal/`](uts-minimal/).
+
+> Yang *tanpa database* di kisi-kisi hanya **halaman login** (cukup `if`). **CRUD tetap memakai database MySQL.** Perbandingannya ada di `CATATAN_UTS.md` bagian 8b.
 
 ### Apa yang di-print untuk ujian open book?
 

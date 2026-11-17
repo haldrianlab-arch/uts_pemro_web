@@ -1,5 +1,6 @@
 <?php
 // index.php -> tampil data ke tabel utama
+include "cek_login.php"; // harus login dulu
 include "koneksi.php";
 
 $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
@@ -11,6 +12,8 @@ $result = $conn->query("SELECT * FROM mahasiswa ORDER BY nim");
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <p>Halo, <?php echo $_SESSION["username"]; ?> | <a href="logout.php">Logout</a></p>
+
     <h2>Data Mahasiswa</h2>
     <a href="tambah.php">+ Tambah Data</a>
     <br><br>

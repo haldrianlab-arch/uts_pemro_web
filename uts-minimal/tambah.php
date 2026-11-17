@@ -1,5 +1,6 @@
 <?php
 // tambah.php -> tambah data + validasi (Pertemuan 6) + upload foto
+include "cek_login.php"; // harus login dulu
 include "koneksi.php";
 
 $nim = $nama = $email = $jk = $jurusan = $tgl_lahir = $alamat = "";
